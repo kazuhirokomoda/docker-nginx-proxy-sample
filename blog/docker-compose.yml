@@ -1,0 +1,44 @@
+# http://docs.docker.jp/compose/wordpress.html
+# https://docs.docker.com/compose/wordpress/
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: blog-db
+    # ports: # TODO: PhpMyAdminなどのコンソールでDB(MySQL)にアクセスできるようにする
+    #  - "3306:3306" 
+    volumes:
+      - blog-db-data:/var/lib/mysql
+    restart: always
+    env_file: .db.env
+ 
+  wordpress:
+    depends_on:
+      - db
+    build: ./dockerconf/wordpress
+    container_name: blog-wordpress
+    volumes:
+      - blog-wordpress-data:/var/www/html/wp-content
+    ports:
+      - "8000:80"
+    restart: always
+    env_file: .wordpress.env
+
+volumes:
+  blog-db-data:
+    # driver_opts:
+    #  type: none
+    #  device: /home/workuser/docker/data/blog/db
+    #  o: bind
+  blog-wordpress-data:
+    # driver_opts:
+    #  type: none
+    #  device: /home/workuser/docker/data/blog/wordpress/wp-content
+    #  o: bind
+
+networks:
+  default:
+    external:
+      name: nginxproxy_default
+

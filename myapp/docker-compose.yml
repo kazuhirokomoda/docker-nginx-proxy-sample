@@ -1,23 +1,21 @@
 version: '2'
 services:
   nginx:
-    build: ./docker/nginx
+    build: ./dockerconf/nginx
     container_name: myapp-nginx
     depends_on:
       - php
     volumes:
       - .:/var/www
-    environment:
-      VIRTUAL_HOST: myapp.mydomain.com
-      LETSENCRYPT_HOST: myapp.mydomain.com
-      LETSENCRYPT_EMAIL: your.real@email.com
+    env_file: .env
     restart: always
   php:
-    build: ./docker/php
+    build: ./dockerconf/php
     container_name: myapp-php
     volumes:
       - .:/var/www
     restart: always
+
 networks:
   default:
     external:
